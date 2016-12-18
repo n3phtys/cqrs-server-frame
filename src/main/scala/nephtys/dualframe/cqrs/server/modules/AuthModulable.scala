@@ -1,14 +1,7 @@
-package nephtys.dualframe.cqrs.server
+package nephtys.dualframe.cqrs.server.modules
 
-
-import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server._
-import akka.stream.ActorMaterializer
-import akka.http.scaladsl.server.{Directives, Route}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
 import org.nephtys.loom.generic.protocol.InternalStructures.Email
 
 import scala.concurrent.Future

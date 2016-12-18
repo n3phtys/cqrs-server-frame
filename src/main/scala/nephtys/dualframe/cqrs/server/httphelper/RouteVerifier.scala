@@ -1,17 +1,16 @@
-package nephtys.dualframe.cqrs.server
+package nephtys.dualframe.cqrs.server.httphelper
 
-
-import akka.http.scaladsl.model.HttpHeader
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Route, _}
-import upickle.default._
-
-import scala.util.{Failure, Success, Try}
 import java.net.URI
 
+import akka.http.scaladsl.model.HttpHeader
 import akka.http.scaladsl.model.headers.HttpChallenge
 import akka.http.scaladsl.server.AuthenticationFailedRejection.{CredentialsMissing, CredentialsRejected}
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{Route, _}
+import nephtys.dualframe.cqrs.server.modules.AuthModulable
 import org.nephtys.loom.generic.protocol.InternalStructures.Email
+
+import scala.util.{Failure, Success, Try}
 
 /**
   * Created by nephtys on 12/18/16.
@@ -88,7 +87,6 @@ object RouteVerifier {
     }
     }
   }
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   def OIDCauthenticated(route: Email => Route)(implicit authModule: AuthModulable): Route = {
     extractRequest { request => {
@@ -115,16 +113,4 @@ object RouteVerifier {
     }
   }
 
-  def jsonPost[T](route : T => Route)(implicit reader : Reader[T]) : Route = {
-    entity(as[String]) { jsonstring => {
-      Try(read[T](jsonstring)) match {
-        case Success(t) => route.apply(t)
-        case Failure(e) => {
-          println("jsonPost failed with error = " + e.toString)
-          reject()
-        }
-      }
-    }
-    }
-  }
 }
