@@ -14,7 +14,5 @@ trait PersistenceModulable {
 
   def getAggregates[Agg <: org.nephtys.loom.generic.protocol.Aggregate[Agg]](endpointRoot: EndpointRoot, requester : Email, includePublic : Boolean, includeReadOnly : Boolean) : Future[Seq[Agg]]
 
-  //TODO: implement generic DoCommands taking list of commands, email, and returning future of failablelist
-
-  def doCommands[T <: Aggregate[T], P <: Protocol[T]](commands : P#Command) : Future[FailableList[P#Event]]
+  def doCommands[T <: Aggregate[T], P <: Protocol[T]](commands : Seq[P#Command], requester : Email) : Future[FailableList[P#Event]]
 }

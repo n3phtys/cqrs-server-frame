@@ -15,7 +15,8 @@ class PersistenceModule extends PersistenceModulable{
   //TODO: remove mock values:
   override def getAggregates[Agg <: Aggregate[Agg]](endpointRoot: EndpointRoot, requester: Email, includePublic: Boolean, includeReadOnly: Boolean): Future[Seq[Agg]] = Future.successful(Seq.empty)
 
-  override def doCommands[T <: Aggregate[T], P <: Protocol[T]](commands: P#Command): Future[FailableList[P#Event]] = Future.successful(FailableList(Seq.empty))
-
   override def etag(endpointRoot: EndpointRoot): EntityTag =  akka.http.scaladsl.model.headers.EntityTag("abc", weak = false) //TODO: replace by real call
+
+  override def doCommands[T <: Aggregate[T], P <: Protocol[T]](commands: Seq[P#Command], requester: Email): Future[FailableList[P#Event]] = Future.successful(FailableList(Seq.empty))
+
 }

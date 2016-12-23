@@ -63,7 +63,9 @@ object ProtocolRouteDefinition {
             entity(as[String]) { jsonstring => {
               Try(backend.readCommands(json = jsonstring)) match {
                 case Failure(e) => reject()
-                case Success(t) => complete("success parsing the incoming json commands") //todo: call internal persistence layer
+                case Success(t) => onSuccess(persistenceModulable.doCommands[Agg, T](t, email)) {
+                  t => complete("success parsing the incoming json commands")
+                } //todo: call internal persistence layer
               }
             }
             }
