@@ -1,3 +1,5 @@
+import java.net.{Inet6Address, InetAddress}
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server._
@@ -42,17 +44,20 @@ object SimpleTestMain extends App {
   val hostname : String = authModule.hostname
   val port = authModule.port
 
+  def hostip : String = InetAddress.getAllByName(hostname).filter(_.isInstanceOf[Inet6Address]).map(_.asInstanceOf[Inet6Address].getHostAddress).headOption.getOrElse("localhost")
+
+  println(s"binding to IPv6 address: $hostip")
   import scala.concurrent.ExecutionContext.Implicits.global
 
   val usesHttps : Boolean = authModule.isHttps
   if (usesHttps) {
     println("using SSL cert...")
     val https = CertManager.buildSSLContextFrom()
-    val x = Http().bindAndHandle(route,hostname,port, connectionContext = https)
-    println("Opened at: " + authModule.completeurl)
+    val x = Http().bindAndHandle(route,hostip,port, connectionContext = https)
+    println("Opened at: " + hostip)
   } else {
     println("binding without SSL...")
-    val x = Http().bindAndHandle(route,hostname,port)
-    println("Opened at: " + authModule.completeurl)
+    val x = Http().bindAndHandle(route,hostip,port)
+    println("Opened at: " + hostip)
   }
 }

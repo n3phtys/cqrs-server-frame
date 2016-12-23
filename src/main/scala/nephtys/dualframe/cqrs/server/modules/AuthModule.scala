@@ -19,7 +19,6 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
-import nephtys.dualframe.cqrs.server.modules.{AuthModulable, PersistenceModulable}
 import org.nephtys.loom.generic.protocol.InternalStructures.EndpointRoot
 import org.nephtys.loom.generic.protocol.{Backend, Protocol}
 import upickle.default._
