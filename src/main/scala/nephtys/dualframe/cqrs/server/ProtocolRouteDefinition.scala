@@ -18,7 +18,7 @@ import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
 import nephtys.dualframe.cqrs.server.modules.{AuthModulable, PersistenceModulable}
-import org.nephtys.loom.generic.protocol.InternalStructures.EndpointRoot
+import org.nephtys.loom.generic.protocol.InternalStructures.{EndpointRoot, FailableList}
 import org.nephtys.loom.generic.protocol.{Backend, Protocol}
 import upickle.default._
 
@@ -28,11 +28,6 @@ import scala.util.{Failure, Success, Try}
   * Created by nephtys on 12/18/16.
   */
 object ProtocolRouteDefinition {
-
-
-
-
-  //TODO: per prefix: POST commands
 
 
   import nephtys.dualframe.cqrs.server.httphelper.RouteVerifier._
@@ -63,9 +58,9 @@ object ProtocolRouteDefinition {
             entity(as[String]) { jsonstring => {
               Try(backend.readCommands(json = jsonstring)) match {
                 case Failure(e) => reject()
-                case Success(t) => onSuccess(persistenceModulable.doCommands[Agg, T](t, email)) {
-                  t => complete("success parsing the incoming json commands")
-                } //todo: call internal persistence layer
+                case Success(t) => onSuccess(persistenceModulable.doCommands[Agg, T](t, email, backend)) {
+                  result => complete(backend.writeFailableList(result.asInstanceOf[FailableList[backend.Event]])) //necessary hack to get around type erasure
+                }
               }
             }
             }

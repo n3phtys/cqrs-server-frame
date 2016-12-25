@@ -14,5 +14,5 @@ trait PersistenceModulable {
 
   def getAggregates[Agg <: org.nephtys.loom.generic.protocol.Aggregate[Agg]](endpointRoot: EndpointRoot, requester : Email, includePublic : Boolean, includeReadOnly : Boolean) : Future[Seq[Agg]]
 
-  def doCommands[T <: Aggregate[T], P <: Protocol[T]](commands : Seq[P#Command], requester : Email) : Future[FailableList[P#Event]]
+  def doCommands[T <: Aggregate[T], P <: Protocol[T] with Backend[T]](commands : Seq[P#Command], requester : Email, backend : P) : Future[FailableList[P#Event]]
 }
